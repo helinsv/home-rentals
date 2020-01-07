@@ -8,22 +8,35 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class DataService {
 
-  homes$ = new BehaviorSubject([]);
+  homes$ = new BehaviorSubject({ loading: true, data: []});
 
   constructor(private httpClient: HttpClient) { }
 
-  loadHomes(homeTypeFilters) {
-    this.homes$.next([]);
+  loadHomes(homeTypeFilters, searchString) {
+
+    // indicate thaht homes are loading when loadHomes is called
+    this.homes$.next({ loading: true, data: [] });
     this.httpClient.get<any[]>('assets/homes.json').pipe(delay(2000),
+    // filter homes on client side
     map(homes => {
       if (!homeTypeFilters.length) {
         return homes;
       }
       return homes.filter( home => homeTypeFilters.includes(home.type));
-    })
+    }),
+
+    // search homes on client side
+    map(homes => {
+      if (!searchString) {
+        return homes;
+      }
+      return homes.filter(home => home.title.toLowerCase().includes(searchString));
+        })
     )
+
     .subscribe(homes => {
-      this.homes$.next(homes);
+      this.homes$.next({ loading: false, data: homes });
     });
   }
+
 }

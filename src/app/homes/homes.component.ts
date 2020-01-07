@@ -8,9 +8,9 @@ import { Router, ActivatedRoute } from '@angular/router';
   styleUrls: ['./homes.component.sass']
 })
 export class HomesComponent implements OnInit {
-
   homeTypeDropdownOpen = false;
   currentHomeTypeFilters = [];
+  currentSearch = '';
   homes$ = this.dataService.homes$;
 
   constructor(
@@ -22,15 +22,29 @@ export class HomesComponent implements OnInit {
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       const homeTypeFilters = params['home-type'] || [];
-      this.dataService.loadHomes(homeTypeFilters);
+      const searchString = params.search || [];
+
+      this.dataService.loadHomes(homeTypeFilters, searchString);
       this.currentHomeTypeFilters = homeTypeFilters;
+      this.currentSearch = searchString;
     });
 
   }
 
   homeTypeFilterApplied($event) {
     this.homeTypeDropdownOpen = false;
-    this.router.navigate(['homes'], { queryParams: {'home-type': $event }});
+
+    const params = this.route.snapshot.queryParams;
+    const homeType = { 'home-type': $event};
+
+    this.router.navigate(['homes'], { queryParams: {...params, ...homeType }});
+  }
+
+  searchApplied($event){
+    const params = this.route.snapshot.queryParams;
+    const search = { 'search': $event};
+
+    this.router.navigate(['homes'], { queryParams: {...params, ...search }});
   }
 
 }
