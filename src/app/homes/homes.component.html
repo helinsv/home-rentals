@@ -1,0 +1,38 @@
+<div class="uk-container uk-padding">
+    <h1>Homes</h1>
+    <div class="uk-flex uk-grid-small uk-margin">
+        <div>
+            <button (click)="homeTypeDropdownOpen = !homeTypeDropdownOpen" [ngClass]="{ 'uk-button-primary': currentHomeTypeFilters.length>0 }" class="uk-button uk-button-default uk-button-small uk-text-nowrap">Home type </button>
+            <div *ngIf="homeTypeDropdownOpen" class="uk-dropdown uk-open uk-width-medium">
+                <app-home-type-filter [defaultFilters]="currentHomeTypeFilters" (applied)="homeTypeFilterApplied($event)"></app-home-type-filter>
+            </div>
+        </div>
+        <div>
+            <button class="uk-button uk-button-default uk-button-small uk-text-nowrap">Dates</button>
+        </div>
+        <div>
+            <button class="uk-button uk-button-default uk-button-small uk-text-nowrap">Guests </button>
+        </div>
+    </div>
+
+    <div *ngIf="(homes$ | async) as homes">
+        <ng-container *ngIf="homes.length == 0">
+            <div uk-spinner class="uk-align-center uk-text-center"></div>
+        </ng-container>
+        <div class="uk-grid-match uk-child-width-1-3@s" uk-grid>
+            <div *ngFor="let home of homes">
+                <div class="uk-card">
+                    <div class="uk-card-media-top">
+                        <img src="{{ home.image_url }}" alt="Property type - {{home.type}}">
+                    </div>
+                    <div class="uk-card-body uk-padding-remove">
+                        <div class="uk-text-muted uk-text-uppercase uk-text-small uk-text-bold uk-text-truncate"> {{ home.type }} / {{ home.location }} </div>
+                        <div class="uk-text-bold"> {{ home.title }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
